@@ -20,6 +20,7 @@ CREATE TABLE jeux (
     titre VARCHAR(255) NOT NULL,
     description TEXT,
     note DECIMAL(3,1),
+    image_url VARCHAR(255) NOT NULL,
     temps_jeu INT DEFAULT 0
 );
 

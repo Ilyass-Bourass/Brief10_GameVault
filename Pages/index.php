@@ -1,3 +1,9 @@
+<?php
+    require_once '../config/dataBase.php';
+    $db=new Database();
+    $connex=$db->getConnection();
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
