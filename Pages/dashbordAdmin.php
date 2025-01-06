@@ -13,7 +13,11 @@
     $Jeux=$jeu->getAllJeux();
     //var_dump($Jeux);
     $utilsateur=  new Utilisateur($connex);
+
     $utilsateurs=$utilsateur->getAllutilsateur();
+
+    $utilsateursBani=$utilsateur->getAllUtilsateurBani();
+    //var_dump($utilsateursBani);
     
 ?>
 
@@ -66,19 +70,28 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-gray-900 p-6 rounded-lg">
                 <h3 class="text-orange-400 text-lg">Total Utilisateurs</h3>
-                <p class="text-3xl font-bold">1,234</p>
+                <p class="text-3xl font-bold"><?php 
+                    $total = count($utilsateur->getAllutilsateur()) + count($utilsateur->getAllUtilsateurBani());
+                    echo $total;
+                ?></p>
             </div>
             <div class="bg-gray-900 p-6 rounded-lg">
                 <h3 class="text-orange-400 text-lg">Total Jeux</h3>
-                <p class="text-3xl font-bold">567</p>
+                <p class="text-3xl font-bold"><p class="text-3xl font-bold"> <?php 
+                    echo count($jeu->getAllJeux());
+                ?></p></p>
             </div>
             <div class="bg-gray-900 p-6 rounded-lg">
                 <h3 class="text-orange-400 text-lg">Utilisateurs Actifs</h3>
-                <p class="text-3xl font-bold">890</p>
+                <p class="text-3xl font-bold"> <?php 
+                    echo count($utilsateur->getAllutilsateur());
+                ?></p>
             </div>
             <div class="bg-gray-900 p-6 rounded-lg">
                 <h3 class="text-orange-400 text-lg">Utilisateurs Bannis</h3>
-                <p class="text-3xl font-bold">12</p>
+                <p class="text-3xl font-bold"><?php 
+                    echo count($utilsateur->getAllUtilsateurBani());
+                ?></p>
             </div>
         </div>
 
@@ -209,18 +222,23 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <?php foreach($utilsateursBani as $utilsateurBani):?>
                         <tr class="border-b border-gray-800">
-                            <td class="p-4">1</td>
-                            <td class="p-4">Jane Smith</td>
-                            <td class="p-4">jane@example.com</td>
-                            <td class="p-4">2024-01-10</td>
-                            <td class="p-4">Spam</td>
+                            <td class="p-4"><?php echo $utilsateurBani['id_user']?></td>
+                            <td class="p-4"><?php echo $utilsateurBani['nom']?></td>
+                            <td class="p-4"><?php echo $utilsateurBani['email']?></td>
+                            <td class="p-4"><?php echo $utilsateurBani['date_bannissement']?></td>
+                            <td class="p-4"><?php echo $utilsateurBani['raison']?></td>
                             <td class="p-4">
-                                <button class="text-green-400 hover:text-green-300">
-                                    <i class="fas fa-undo"></i>
-                                </button>
+                                <form action="../action/débannerUtilsateur.php" method="POST">
+                                    <input type="hidden" name="id_user" value="<?php echo $utilsateurBani['id_user']?>">
+                                    <button type="submit" class="text-green-400 hover:text-green-300">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>

@@ -14,7 +14,9 @@ class Utilisateur {
     }
 
     public function getAllutilsateur() {
-        $sql = "SELECT * FROM users;";
+        $sql = "SELECT u.* FROM users u 
+                LEFT JOIN user_banni b ON u.id_user = b.id_user 
+                WHERE b.id_user IS NULL";
                 
         $query = $this->connexion->prepare($sql);
         $query->execute();
@@ -142,6 +144,32 @@ class Utilisateur {
             ":id_user"=>$id_user,
             ":raison"=>$raison
         ]);
+    }
+
+    public function débaniUtilsateur($id_user){
+        $sql="DELETE FROM user_banni WHERE id_user=:id_user";
+        $query=$this->connexion->prepare($sql);
+        $query->execute([
+            ":id_user"=>$id_user
+        ]);
+    }
+
+    // public function isBanni($id_user) {
+    //     $sql = "SELECT * FROM user_banni WHERE id_user = :id_user";
+    //     $query = $this->connexion->prepare($sql);
+    //     $query->execute([
+    //         ":id_user" => $id_user
+    //     ]);
+    //     return $query->rowCount() > 0;
+    // }
+
+    public function getAllUtilsateurBani(){
+        $sql="SELECT u.*,b.date_bannissement,b.raison FROM users u 
+        INNER JOIN user_banni b ON 
+        u.id_user=b.id_user " ;
+        $query=$this->connexion->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function inscrire(){
