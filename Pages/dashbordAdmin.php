@@ -2,7 +2,10 @@
     require_once '../config/dataBase.php';
     require '../classes/jeu.php';
     require '../classes/utilsateur.php';
-
+    session_start();
+    if(!$_SESSION['is_admin']){
+        header('location: index.php');
+    }
     $db=new Database();
     $connex=$db->getConnection();
 
@@ -11,7 +14,6 @@
     //var_dump($Jeux);
     $utilsateur=  new Utilisateur($connex);
     $utilsateurs=$utilsateur->getAllutilsateur();
-    //var_dump($utilsateurs);
     
 ?>
 
@@ -52,7 +54,7 @@
         
         
         <div class="mb-4">
-            <a href="index.php" class="block p-3 rounded bg-red-600 hover:bg-red-700 text-center">
+            <a href="logout.php" class="block p-3 rounded bg-red-600 hover:bg-red-700 text-center">
                 <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
             </a>
         </div>
