@@ -6,6 +6,7 @@ class Jeu {
     private $description;
     private $note;
     private $tempsJeu;
+    private $connexion;
 
     public function __construct($titre = "", $description = "", $note = 0, $tempsJeu = 0) {
         $this->titre = $titre;
@@ -14,6 +15,11 @@ class Jeu {
         $this->tempsJeu = $tempsJeu;
     }
 
+    public function getAllJeux($connexion) {
+        $stmt = $connexion->query("SELECT * FROM jeux");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
     public function getIdJeu() {
         return $this->id_jeu;
     }

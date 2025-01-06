@@ -1,7 +1,7 @@
-<?php
-    require_once '../config/dataBase.php';
-    $db=new Database();
-    $connex=$db->getConnection();
+<?php 
+require_once '../action/afficherJeux.php';
+require_once '../action/cheakSession.php';
+
 ?>
 
 <!DOCTYPE html>
@@ -17,25 +17,36 @@
 
 <body class="bg-black text-white">
     <!-- Navbar -->
-    <header class="bg-orange-700 p-4 fixed w-full z-50">
+    <header class="bg-orange-700 p-4 w-full z-50">
         <div class="flex justify-between items-center">
             <nav class="flex space-x-4">
                 <a href="index.php" class="text-white font-bold hover:text-orange-300 transition duration-300">
                     <i class="fas fa-home"></i> Home
                 </a>
                 <a href="#jeux" class="text-white font-bold hover:text-orange-300 transition duration-300">Jeux</a>
-                <a href="dashbordAdmin.php"
-                    class="text-white font-bold hover:text-orange-300 transition duration-300">dashbordAdmin</a>
+                <a href="maListe.php" class="text-white font-bold hover:text-orange-300 transition duration-300">Ma List</a>
+                <!-- <a href="dashbordAdmin.php"
+                    class="text-white font-bold hover:text-orange-300 transition duration-300">dashbordAdmin</a> -->
             </nav>
             <div class="flex space-x-4">
-                <button onclick="openModal('loginModal')"
-                    class="bg-orange-500 text-white font-bold py-2 px-4 rounded hover:bg-orange-600 transition duration-300">
-                    <i class="fas fa-sign-in-alt"></i> Connexion
-                </button>
-                <button onclick="openModal('registerModal')"
-                    class="bg-orange-500 text-white font-bold py-2 px-4 rounded hover:bg-orange-600 transition duration-300">
-                    <i class="fas fa-user-plus"></i> Inscription
-                </button>
+                <?php if(isset($_SESSION['is_login']) && $_SESSION['role'] == 'USER') : ?>
+                <div class="flex items-center space-x-4">
+                    <span class="text-white">Bienvenue, <?php echo $_SESSION['nom']; ?></span>
+                    <a href="logout.php"
+                        class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition duration-300">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+                    </a>
+                </div>
+                <?php else : ?>
+                <a href="signin.php"><button
+                        class="bg-orange-500 text-white font-bold py-2 px-4 rounded hover:bg-orange-600 transition duration-300">
+                        <i class="fas fa-sign-in-alt"></i> Connexion
+                    </button></a>
+                <a href="signup.php"><button
+                        class="bg-orange-500 text-white font-bold py-2 px-4 rounded hover:bg-orange-600 transition duration-300">
+                        <i class="fas fa-user-plus"></i> Inscription
+                    </button></a>
+                <?php endif; ?>
             </div>
         </div>
     </header>
@@ -59,141 +70,50 @@
         </div>
     </div>
 
-    <!-- Modal Connexion -->
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
-        <div class="bg-gray-900 p-8 rounded-lg w-96">
-            <h2 class="text-2xl font-bold mb-4">Connexion</h2>
-            <form action="login.php" method="POST" class="space-y-4">
-                <div>
-                    <label class="block mb-2">Email</label>
-                    <input type="email" name="email" required class="w-full bg-gray-800 rounded p-2 text-white">
-                </div>
-                <div>
-                    <label class="block mb-2">Mot de passe</label>
-                    <input type="password" name="password" required class="w-full bg-gray-800 rounded p-2 text-white">
-                </div>
-                <div class="flex justify-end space-x-4">
-                    <button type="button" onclick="closeModal('loginModal')"
-                        class="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600">Annuler</button>
-                    <button type="submit" class="bg-orange-500 px-4 py-2 rounded hover:bg-orange-600">Connexion</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Inscription -->
-    <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
-        <div class="bg-gray-900 p-8 rounded-lg w-96">
-            <h2 class="text-2xl font-bold mb-4">Inscription</h2>
-            <form action="register.php" method="POST" class="space-y-4">
-                <div>
-                    <label class="block mb-2">Nom</label>
-                    <input type="text" name="nom" required class="w-full bg-gray-800 rounded p-2 text-white">
-                </div>
-                <div>
-                    <label class="block mb-2">Email</label>
-                    <input type="email" name="email" required class="w-full bg-gray-800 rounded p-2 text-white">
-                </div>
-                <div>
-                    <label class="block mb-2">Mot de passe</label>
-                    <input type="password" name="password" required class="w-full bg-gray-800 rounded p-2 text-white">
-                </div>
-                <div class="flex justify-end space-x-4">
-                    <button type="button" onclick="closeModal('registerModal')"
-                        class="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600">Annuler</button>
-                    <button type="submit"
-                        class="bg-orange-500 px-4 py-2 rounded hover:bg-orange-600">S'inscrire</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Section Jeux avec ID pour la navigation -->
     <main id="jeux" class="p-6 max-w-7xl mx-auto pt-24">
         <h2 class="text-4xl font-bold mb-8 text-orange-400">Jeux Populaires</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Carte 1 -->
+            <?php foreach($allgames as $games): ?>
             <div
                 class="bg-gray-900 rounded-lg overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300">
-                <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f" alt="The Last of Us"
-                    class="w-full h-48 object-cover">
+                <img src="<?php echo $games['image_url'] ;?>" alt="The Last of Us" class="w-full h-48 object-cover">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-2xl font-bold">The Last of Us</h3>
+                        <h3 class="text-2xl font-bold"><?php echo $games['titre']; ?></h3>
                         <div class="flex items-center">
                             <i class="fas fa-star text-yellow-400 mr-1"></i>
-                            <span class="text-yellow-400 font-bold">4.8</span>
+                            <span class="text-yellow-400 font-bold"><?php echo $games['note'];?></span>
                         </div>
                     </div>
-                    <p class="text-gray-400 mb-4">Une aventure post-apocalyptique captivante...</p>
+                    <p class="text-gray-400 mb-4"><?php echo $games['description'];?></p>
                     <div class="flex justify-between items-center">
-                        <a href="maListe.php?id=1"
-                            class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition duration-300">
-                            <i class="fas fa-plus mr-2"></i>Ma Liste
-                        </a>
-                        <a href="détails.php?id=1"
-                            class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300">
-                            <i class="fas fa-info-circle mr-2"></i>Voir plus
-                        </a>
-                    </div>
-                </div>
-            </div>
+                        <form action="" method="post">
+                            <input type="hidden" name="userId"
+                                value="<?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : '';?>">
+                            <button type="submit"
+                                class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition duration-300"
+                                name="maliste">
+                                <i class="fas fa-plus mr-2"></i>Ma Liste
+                            </button>
+                        </form>
+                        <form action="" method="post">
+                            <input type="hidden" name="idGame" value="<?php echo $games['id_jeu'];?>">
+                            <button type="submit"
+                                class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300"
+                                name="VoirPlus">
+                                <i class="fas fa-info-circle mr-2"></i>Voir plus
+                            </button>
+                        </form>
 
-            <!-- Carte 2 -->
-            <div
-                class="bg-gray-900 rounded-lg overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300">
-                <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5" alt="God of War"
-                    class="w-full h-48 object-cover">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-2xl font-bold">God of War</h3>
-                        <div class="flex items-center">
-                            <i class="fas fa-star text-yellow-400 mr-1"></i>
-                            <span class="text-yellow-400 font-bold">4.9</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-400 mb-4">Une épopée nordique légendaire...</p>
-                    <div class="flex justify-between items-center">
-                        <a href="maListe.php?id=2"
-                            class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition duration-300">
-                            <i class="fas fa-plus mr-2"></i>Ma Liste
-                        </a>
-                        <a href="détails.php?id=2"
-                            class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300">
-                            <i class="fas fa-info-circle mr-2"></i>Voir plus
-                        </a>
                     </div>
                 </div>
             </div>
-
-            <!-- Carte 3 -->
-            <div
-                class="bg-gray-900 rounded-lg overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300">
-                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e" alt="Horizon Zero Dawn"
-                    class="w-full h-48 object-cover">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-2xl font-bold">Horizon Zero Dawn</h3>
-                        <div class="flex items-center">
-                            <i class="fas fa-star text-yellow-400 mr-1"></i>
-                            <span class="text-yellow-400 font-bold">4.7</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-400 mb-4">Un monde ouvert futuriste...</p>
-                    <div class="flex justify-between items-center">
-                        <a href="maListe.php?id=3"
-                            class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition duration-300">
-                            <i class="fas fa-plus mr-2"></i>Ma Liste
-                        </a>
-                        <a href="détails.php?id=3"
-                            class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300">
-                            <i class="fas fa-info-circle mr-2"></i>Voir plus
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach ; ?>
         </div>
     </main>
+
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-8 mt-12">
@@ -227,15 +147,6 @@
         </div>
     </footer>
 
-    <script>
-    function openModal(modalId) {
-        document.getElementById(modalId).style.display = 'flex';
-    }
-
-    function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-    }
-    </script>
 </body>
 
 </html>
