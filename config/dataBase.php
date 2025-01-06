@@ -5,7 +5,7 @@ class Database {
     private $username = "root";
     private $password = "";
     public $connexion;
-
+    
     public function getConnection() {
         try {
             $this->connexion = new PDO(
@@ -14,7 +14,7 @@ class Database {
                 $this->password
             );
             $this->connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            echo "connexion réussite";
+            // echo "connexion réussite";
             return $this->connexion;
         } catch(PDOException $e) {
             echo "Erreur de connexion : " . $e->getMessage();

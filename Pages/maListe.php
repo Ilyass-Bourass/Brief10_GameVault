@@ -1,3 +1,9 @@
+<?php
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -13,7 +19,7 @@
         <div class="flex justify-between items-center">
             <nav class="flex space-x-4">
                 <a href="index.php" class="text-white font-bold hover:text-orange-300 transition duration-300">Accueil</a>
-                <a href="index.php#jeux" class="text-white font-bold hover:text-orange-300 transition duration-300">Jeux</a>
+                <a href="index.php" class="text-white font-bold hover:text-orange-300 transition duration-300">Jeux</a>
                 <a href="#" class="text-white font-bold hover:text-orange-300 transition duration-300">Découvrir</a>
             </nav>
             <div class="flex items-center space-x-4">
