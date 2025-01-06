@@ -13,6 +13,15 @@ class Utilisateur {
         $this->connexion = $connexion;
     }
 
+    public function getAllutilsateur() {
+        $sql = "SELECT * FROM users;";
+                
+        $query = $this->connexion->prepare($sql);
+        $query->execute();
+        
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function register($name, $email, $password) {
         /* *********************************
         ************ validation ************
@@ -116,6 +125,23 @@ class Utilisateur {
 
     public function setMotpass($motpass) {
         $this->motpass = password_hash($motpass, PASSWORD_DEFAULT);
+    }
+
+    public function supprimerutilsateur($id_user){
+        $sql="DELETE from users WHERE id_user=:id_user";
+        $query=$this->connexion->prepare($sql);
+        $query->execute([
+            ":id_user"=>$id_user
+        ]);
+    }
+
+    public function baniUtilsateur($id_user,$raison){
+        $sql="INSERT INTO user_banni(id_user,raison) VALUES (:id_user,:raison)";
+        $query=$this->connexion->prepare($sql);
+        $query->execute([
+            ":id_user"=>$id_user,
+            ":raison"=>$raison
+        ]);
     }
 
     public function inscrire(){
