@@ -157,14 +157,17 @@
                                 <td class="p-4"><?php echo $utilsateur['date_inscription'] ?></td>
                                 
                                 <td class="p-4 text-center">
-                                    <select class="bg-gray-800 text-white rounded p-2">
-                                        <option value="USER" <?php echo ($utilsateur['role'] == 'USER') ? 'selected' : ''; ?>>
-                                            Utilisateur
-                                        </option>
-                                        <option value="ADMIN" <?php echo ($utilsateur['role'] == 'ADMIN') ? 'selected' : ''; ?>>
-                                            Administrateur
-                                        </option>
-                                    </select>
+                                    <form method="POST" action="../action/modifierRole.php">
+                                        <input type="hidden" name='id_user' value='<?php echo $utilsateur['id_user'] ?>'>
+                                        <select name="role" class="bg-gray-800 text-white rounded p-2" onchange=this.form.submit()>
+                                            <option value="USER" <?php echo ($utilsateur['role'] == 'USER') ? 'selected' : ''; ?>>
+                                                Utilisateur
+                                            </option>
+                                            <option value="ADMIN" <?php echo ($utilsateur['role'] == 'ADMIN') ? 'selected' : ''; ?>>
+                                                Administrateur
+                                            </option>
+                                        </select>
+                                    </form>
                                 </td>
 
                                 <td class="p-4">

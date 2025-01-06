@@ -155,6 +155,20 @@ class Utilisateur {
     public function modifierMonProfil(){
 
     }
+
+    public function modifierRole($id_user,$role){
+        try{
+             $sql="UPDATE users SET role=:role WHERE id_user=:id_user";
+            $query=$this->connexion->prepare($sql);
+            $query->execute([
+            ':role'=>$role,
+            ':id_user'=>$id_user,
+        ]);
+        }catch(PDOexception $e){
+            echo "message".$e->getmessage();
+        }
+       
+    }
 }
 
 ?>
