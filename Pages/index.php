@@ -2,6 +2,7 @@
 require_once '../action/afficherJeux.php';
 require_once '../action/cheakSession.php';
 
+
 ?>
 
 <!DOCTYPE html>
@@ -25,8 +26,8 @@ require_once '../action/cheakSession.php';
                 </a>
                 <a href="#jeux" class="text-white font-bold hover:text-orange-300 transition duration-300">Jeux</a>
                 <a href="maListe.php" class="text-white font-bold hover:text-orange-300 transition duration-300">Ma List</a>
-                <a href="dashbordAdmin.php"
-                    class="text-white font-bold hover:text-orange-300 transition duration-300">dashbordAdmin</a>
+                <a href="profil.php?user_id=<?php echo $_SESSION['user_id'];?>"
+                    class="text-white font-bold hover:text-orange-300 transition duration-300">Profil</a>
             </nav>
             <div class="flex space-x-4">
                 <?php if(isset($_SESSION['is_login']) && $_SESSION['role'] == 'USER') : ?>

@@ -197,6 +197,13 @@ class Utilisateur {
         }
        
     }
+
+    public function profil($id_utilisateur){
+        $query = "SELECT nom,email FROM users WHERE id_user = :id_user";
+        $stmt = $this->connexion->prepare($query);
+        $stmt->execute([':id_user' => $id_utilisateur]);
+        return $stmt->fetch(PDO:: FETCH_ASSOC);
+    }
 }
 
 ?>
