@@ -13,7 +13,7 @@ class Utilisateur {
         $this->connexion = $connexion;
     }
 
-    public function getAllutilsateur() {
+    public function getAllutilsateurNotBanni() {
         $sql = "SELECT u.* FROM users u 
                 LEFT JOIN user_banni b ON u.id_user = b.id_user 
                 WHERE b.id_user IS NULL";
@@ -154,14 +154,14 @@ class Utilisateur {
         ]);
     }
 
-    // public function isBanni($id_user) {
-    //     $sql = "SELECT * FROM user_banni WHERE id_user = :id_user";
-    //     $query = $this->connexion->prepare($sql);
-    //     $query->execute([
-    //         ":id_user" => $id_user
-    //     ]);
-    //     return $query->rowCount() > 0;
-    // }
+    public function isBanni($id_user) {
+        $sql = "SELECT * FROM user_banni WHERE id_user = :id_user";
+        $query = $this->connexion->prepare($sql);
+        $query->execute([
+            ":id_user" => $id_user
+        ]);
+        return $query->rowCount() > 0;
+    }
 
     public function getAllUtilsateurBani(){
         $sql="SELECT u.*,b.date_bannissement,b.raison FROM users u 

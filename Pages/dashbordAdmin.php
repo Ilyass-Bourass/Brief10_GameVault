@@ -14,7 +14,7 @@
     //var_dump($Jeux);
     $utilsateur=  new Utilisateur($connex);
 
-    $utilsateurs=$utilsateur->getAllutilsateur();
+    $utilsateursNotbani=$utilsateur->getAllutilsateurNotBanni();
 
     $utilsateursBani=$utilsateur->getAllUtilsateurBani();
     //var_dump($utilsateursBani);
@@ -71,7 +71,7 @@
             <div class="bg-gray-900 p-6 rounded-lg">
                 <h3 class="text-orange-400 text-lg">Total Utilisateurs</h3>
                 <p class="text-3xl font-bold"><?php 
-                    $total = count($utilsateur->getAllutilsateur()) + count($utilsateur->getAllUtilsateurBani());
+                    $total = count($utilsateur->getAllutilsateurNotBanni()) + count($utilsateur->getAllUtilsateurBani());
                     echo $total;
                 ?></p>
             </div>
@@ -84,7 +84,7 @@
             <div class="bg-gray-900 p-6 rounded-lg">
                 <h3 class="text-orange-400 text-lg">Utilisateurs Actifs</h3>
                 <p class="text-3xl font-bold"> <?php 
-                    echo count($utilsateur->getAllutilsateur());
+                    echo count($utilsateur->getAllutilsateurNotBanni());
                 ?></p>
             </div>
             <div class="bg-gray-900 p-6 rounded-lg">
@@ -162,7 +162,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach($utilsateurs as $utilsateur): ?>
+                        <?php foreach($utilsateursNotbani as $utilsateur): ?>
                             <tr class="border-b border-gray-800">
                                 <td class="p-4"><?php echo $utilsateur['id_user'] ?></td>
                                 <td class="p-4"><?php echo $utilsateur['nom'] ?></td>

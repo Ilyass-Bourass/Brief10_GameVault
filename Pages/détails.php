@@ -1,15 +1,29 @@
 <?php
 require_once '../config/dataBase.php';
 require_once '../classes/chat.php';
+require '../classes/jeu.php';
+require '../classes/utilsateur.php';
+
 session_start();
+var_dump($_SESSION);
+echo'-----------------<br>';
+$user_id=$_SESSION['user_id'];
+
+
 $db = new Database();
 $connex = $db->getConnection();
 
 $GameId = $_GET['idGame'];
 $chat = new Chat($connex);
 
+$jeu=new Jeu($connex,"","","");
+$Jeux=$jeu->GetJeu($GameId);
+
+var_dump($Jeux);
+echo'-----------------<br>';
+
 $afficherMessage = $chat->AfficherChatLive($GameId);
-print_r($afficherMessage);
+//print_r($afficherMessage);
 
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['sendLiveChat'])){
     $message = htmlspecialchars($_POST['messageLive']);
@@ -47,12 +61,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['sendLiveChat'])){
             <!-- Left Column: Game Details -->
             <div class="col-span-1 md:col-span-2">
                 <div class="p-6 bg-gray-900 rounded-lg shadow-lg">
-                    <img src="../game1.png" alt="The Last of Us"
+                    <img src="<?php echo $Jeux['image_url']?>" alt="The Last of Us"
                         class="w-full rounded-lg shadow-md mb-6 transition-transform transform hover:scale-105">
-                    <h2 class="text-3xl font-bold mb-4">The Last of Us: Part 1</h2>
+                    <h2 class="text-3xl font-bold mb-4"><?php echo $Jeux['titre']?></h2>
                     <p class="text-gray-400 leading-relaxed mb-6">
-                        Experience the emotional journey of Ellie and Joel in this critically acclaimed adventure game.
-                        Immerse yourself in a post-apocalyptic world and discover the lengths people will go to survive.
+                        <?php echo $Jeux['description']?>
                     </p>
                     <div class="grid grid-cols-4 gap-4 overflow-x-scroll no-scrollbar livechat">
                         <img src="../game1.png" alt="Image 1"
@@ -102,12 +115,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['sendLiveChat'])){
                     </div>
                     <?php endforeach; ?>
                 </div>
-                <form class="mt-4 flex" method="post">
-                    <input type="text" class="flex-grow p-3 rounded-lg bg-gray-700 text-white border border-gray-600"
-                        placeholder="Type your message..." name="messageLive">
-                    <button
-                        class="ml-2 bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition duration-300" name="sendLiveChat">Send</button>
-                </form>
+                <?php  $utilsateur=new Utilisateur($connex);
+                           if(!$utilsateur->isBanni($user_id)):    
+                    ?>
+                    <form class="mt-4 flex" method="post">
+                        <input type="text" class="flex-grow p-3 rounded-lg bg-gray-700 text-white border border-gray-600"
+                            placeholder="Type your message..." name="messageLive">
+                        <button
+                            class="ml-2 bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition duration-300" name="sendLiveChat">Send</button>
+                    </form>
+                    <?php else : ?>
+                        <p>Vous êtes banni, vous n'avez pas la possibilité de discuter.</p>
+                <?php endif?>
+                
             </div>
         </main>
     </div>
