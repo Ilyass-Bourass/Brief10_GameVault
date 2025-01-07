@@ -1,6 +1,7 @@
 <?php
 require_once '../config/dataBase.php';
 require_once '../classes/chat.php';
+require_once '../classes/commentaire.php';
 require '../classes/jeu.php';
 require '../classes/utilsateur.php';
 
@@ -13,14 +14,23 @@ $user_id=$_SESSION['user_id'];
 $db = new Database();
 $connex = $db->getConnection();
 
+
 $GameId = $_GET['idGame'];
 $chat = new Chat($connex);
 
 $jeu=new Jeu($connex,"","","");
 $Jeux=$jeu->GetJeu($GameId);
 
-var_dump($Jeux);
-echo'-----------------<br>';
+$newCommentaire=new Commentaire($connex);
+// echo'-----------------<br>';
+$comentaires=$newCommentaire->getAllCommentaires($GameId);
+var_dump ($comentaires);
+// echo'-----------------<br>';
+
+
+
+// var_dump($Jeux);
+// echo'-----------------<br>';
 
 $afficherMessage = $chat->AfficherChatLive($GameId);
 //print_r($afficherMessage);
@@ -81,22 +91,30 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['sendLiveChat'])){
                 <!-- Comments Section -->
                 <div class="mt-6 bg-gray-800 p-6 rounded-lg shadow-lg">
                     <h3 class="text-2xl font-bold mb-4">Comments</h3>
-                    <form class="mb-4">
-                        <textarea
-                            class="w-full p-3 rounded-lg border border-gray-600 bg-gray-700 text-white resize-none"
-                            rows="4" placeholder="Leave a comment..."></textarea>
-                        <button
-                            class="mt-2 bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition duration-300">Post
-                            Comment</button>
-                    </form>
+
+                <?php  $utilsateur=new Utilisateur($connex);
+                           if(!$utilsateur->isBanni($user_id)):    
+                    ?>
+                        <form class="mb-4" method="POST" action="../action/ajouterComentaire.php">
+                            <input name="GameId" type="hidden" value="<?php echo $GameId ?>">
+                            <textarea name="commentaire"
+                                class="w-full p-3 rounded-lg border border-gray-600 bg-gray-700 text-white resize-none"
+                                rows="4" placeholder="Leave a comment..."></textarea>
+                            <button type="submit"
+                                class="mt-2 bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition duration-300">Post
+                                Comment</button>
+                        </form>
+                <?php endif?>
                     <div>
-                        <div class="mb-4 flex items-start">
-                            <img src="images/profil.avif" alt="Profile" class="w-12 h-12 rounded-full mr-4">
-                            <div>
-                                <p class="font-bold">User123</p>
-                                <p>This game is amazing! Highly recommend.</p>
+                        <?php foreach($comentaires as $comentaire): ?>
+                            <div class="mb-4 flex items-start">
+                                <img src="https://thumbs.dreamstime.com/b/avatar-par-d%C3%A9faut-ic%C3%B4ne-profil-vectoriel-m%C3%A9dias-sociaux-utilisateur-portrait-176256935.jpg" alt="Profile" class="w-12 h-12 rounded-full mr-4">
+                                <div>
+                                    <p class="font-bold"><?php echo $comentaire['nom']?></p>
+                                    <p><?php echo $comentaire['commentaire']?></p>
+                                </div>
                             </div>
-                        </div>
+                        <?php endforeach?>
                     </div>
                 </div>
             </div>
