@@ -112,5 +112,14 @@ class Jeu {
 
     }
 
+    public function GetJeu($id_jeu){
+        $sql="SELECT * FROM jeux where id_jeu=:id_jeu";
+        $query=$this->connexion->prepare($sql);
+        $query->execute([
+            ":id_jeu"=>$id_jeu
+        ]);
+     return $query->fetch(PDO::FETCH_ASSOC);
+    }
+
 }
 ?>
