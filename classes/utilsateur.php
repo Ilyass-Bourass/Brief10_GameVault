@@ -199,10 +199,46 @@ class Utilisateur {
     }
 
     public function profil($id_utilisateur){
-        $query = "SELECT nom,email FROM users WHERE id_user = :id_user";
+        $query = "SELECT * FROM users WHERE id_user = :id_user";
         $stmt = $this->connexion->prepare($query);
         $stmt->execute([':id_user' => $id_utilisateur]);
         return $stmt->fetch(PDO:: FETCH_ASSOC);
+    }
+
+    public function resetPassword($user_id, $CurrentPass, $newPassword, $confirNewPass, $oldPass){
+        if(empty($CurrentPass)){
+            array_push($this->errors, "Current Password is required");
+            return false;
+        }elseif(empty($newPassword)){
+            array_push($this->errors, "new password is required");
+            return false;
+        }elseif(empty($confirNewPass)){
+            array_push($this->errors, "confirm password is required");
+            return false;
+        }elseif(strlen($newPassword) < 6){
+            array_push($this->errors, "password less then 6 char");
+            return false;
+        }
+
+        // 
+        if(!password_verify($CurrentPass, $oldPass)){
+            array_push($this->errors, "this password not found");
+            return false;
+        }elseif($newPassword !== $confirNewPass){
+            array_push($this->errors, "the new password not matches");
+            return false;
+        }
+
+        if(empty($errors)){
+                $passwordHash = password_hash($newPassword, PASSWORD_BCRYPT);
+                $query = "UPDATE users SET mot_passe = :new_Pass WHERE id_user = :id_user";
+                $stmt = $this->connexion->prepare($query);
+                $stmt->execute([
+                    ':new_Pass' => $passwordHash, 
+                    ':id_user' => $user_id
+                ]);
+                return true ;
+        }
     }
 }
 

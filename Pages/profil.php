@@ -13,6 +13,23 @@ $user_id = $_SESSION['user_id'];
 $profil = new Utilisateur($connex);
 $profilinfo = $profil->profil($user_id);
 
+
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ResetPass'])){
+    $currenrPass = $_POST['CurrentPas'];
+    $newPass = $_POST['mewPass'];
+    $conFirmPass = $_POST['confirNewPass'];
+    $old_Pass = $profilinfo['mot_passe'];
+
+    $ressetPassword = $profil->resetPassword($user_id, $currenrPass, $newPass, $conFirmPass, $old_Pass);
+    if($ressetPassword){
+        header('Location: logout.php');
+    }else {
+        $errors = $profil->getErrors();
+        exit();
+    }
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,11 +45,9 @@ $profilinfo = $profil->profil($user_id);
 <body class="bg-orange-300 font-sans">
     <div class="container mx-auto p-4 md:p-8">
         <div class="flex flex-wrap -mx-4 justify-center">
-            <!-- Profile Overview Panel -->
             <div class="w-full sm:w-2/3 md:w-1/3 px-4 mb-6">
                 <div class="bg-black p-6 rounded-lg shadow-lg text-white">
                     <div class="relative text-center mb-6">
-                        <!-- Profile Picture -->
                         <img id="profileImage" src="../background.jpg" alt="Profile Picture"
                             class="rounded-full w-24 h-24 md:w-32 md:h-32 mx-auto border-4 border-orange-500 object-cover">
                         <!-- Overlay for Upload Icon -->
@@ -71,30 +86,36 @@ $profilinfo = $profil->profil($user_id);
                     <?php if (isset($_POST['setting'])) : ?>
                     <!-- Password Reset Panel -->
                     <h2 class="text-xl md:text-2xl font-bold mb-6">Password Reset</h2>
-                    <form>
+                    <?php if(!empty($errors)) :?>
+                    <?php foreach($errors as $error):?>
+                    <P class="text-red-600 text-center"><?php echo $error ?></P>
+                    <?php endforeach;?>
+                    <?php endif;?>
+                    <form method="post">
                         <div class="mb-4">
                             <label class="block text-white font-medium">Current Password</label>
-                            <input type="password" class="w-full p-3 border border-orange-500 rounded-lg text-black"
+                            <input type="password" name="CurrentPas"
+                                class="w-full p-3 border border-orange-500 rounded-lg text-black"
                                 placeholder="Enter current password">
                         </div>
                         <div class="mb-4">
                             <label class="block text-white font-medium">New Password</label>
-                            <input type="password" class="w-full p-3 border border-orange-500 rounded-lg text-black"
+                            <input type="password" name="mewPass"
+                                class="w-full p-3 border border-orange-500 rounded-lg text-black"
                                 placeholder="Enter new password">
                         </div>
                         <div class="mb-4">
                             <label class="block text-white font-medium">Confirm New Password</label>
-                            <input type="password" class="w-full p-3 border border-orange-500 rounded-lg text-black"
+                            <input type="password" name="confirNewPass"
+                                class="w-full p-3 border border-orange-500 rounded-lg text-black"
                                 placeholder="Confirm new password">
                         </div>
-                        <button type="submit"
-                            class="w-full bg-orange-500 text-black py-3 rounded-lg hover:bg-orange-600">Reset
-                            Password</button>
+                        <button type="submit"class="w-full bg-orange-500 text-black py-3 rounded-lg hover:bg-orange-600" name="ResetPass">Reset Password</button>
                     </form>
                     <?php else : ?>
                     <!-- Profile Details Panel -->
                     <h2 class="text-xl md:text-2xl font-bold mb-6">Profile Details</h2>
-                    <form>
+                    <form method="post">
                         <div class="mb-4">
                             <label class="block text-white font-medium">Name</label>
                             <input type="text" class="w-full p-3 border border-orange-500 rounded-lg text-black"
