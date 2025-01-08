@@ -5,6 +5,7 @@ require_once '../classes/commentaire.php';
 require '../classes/jeu.php';
 require '../classes/utilsateur.php';
 
+
 session_start();
 var_dump($_SESSION);
 echo'-----------------<br>';
@@ -19,7 +20,10 @@ $GameId = $_GET['idGame'];
 $chat = new Chat($connex);
 
 $jeu=new Jeu($connex,"","","");
+
 $Jeux=$jeu->GetJeu($GameId);
+
+
 
 $newCommentaire=new Commentaire($connex);
 // echo'-----------------<br>';
@@ -61,6 +65,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['sendLiveChat'])){
     .no-scrollbar::-webkit-scrollbar {
         display: none;
     }
+
+    .active {
+    color: #FFD700;
+    }
     </style>
 </head>
 
@@ -73,7 +81,29 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['sendLiveChat'])){
                 <div class="p-6 bg-gray-900 rounded-lg shadow-lg">
                     <img src="<?php echo $Jeux['image_url']?>" alt="The Last of Us"
                         class="w-full rounded-lg shadow-md mb-6 transition-transform transform hover:scale-105">
-                    <h2 class="text-3xl font-bold mb-4"><?php echo $Jeux['titre']?></h2>
+                    <div class="flex justify-between">
+                        <h2 class="text-3xl font-bold mb-4"><?php echo $Jeux['titre']?></h2>
+                    <?php  $utilsateur=new Utilisateur($connex);
+                           if(!$utilsateur->isBanni($user_id)):    
+                        ?>
+                        <form action="../action/ajouterNote.php" method="POST">
+                            <div class="stars">
+                                <input type="hidden" name='user_id' value='<?php echo $user_id ?>'>
+                                <input type="hidden" name='GameId' value='<?php echo $GameId ?>'>
+                                <input type="hidden" name="note" id="note" value="0">
+                                <i class="fa-solid fa-star cursor-pointer" data-value="1"></i>
+                                <i class="fa-solid fa-star cursor-pointer" data-value="2"></i>
+                                <i class="fa-solid fa-star cursor-pointer" data-value="3"></i>
+                                <i class="fa-solid fa-star cursor-pointer" data-value="4"></i>
+                                <i class="fa-solid fa-star cursor-pointer" data-value="5"></i>
+                                <button type="submit" class="mt-2 bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition duration-300">Noter</button>
+                            </div>
+                        </form>
+                    <?php else : ?>
+                        <p>Vous êtes banni, vous n'avez pas la possibilité de donner une note.</p>
+                    <?php endif?>
+                    </div>
+                    
                     <p class="text-gray-400 leading-relaxed mb-6">
                         <?php echo $Jeux['description']?>
                     </p>
@@ -149,6 +179,22 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['sendLiveChat'])){
             </div>
         </main>
     </div>
+
+<script>
+    let stars=document.querySelectorAll(".stars i");
+    const noteInput = document.getElementById("note");
+    stars.forEach((star,index1)=>{
+  
+  star.addEventListener("click",function(){
+      stars.forEach((star,index2)=>{
+          index1 >= index2 ? star.classList.add("active"):star.classList.remove("active");
+      });
+      const valeur = star.getAttribute("data-value");
+      noteInput.value =valeur;
+  });
+
+});
+</script>
 </body>
 
 </html>
