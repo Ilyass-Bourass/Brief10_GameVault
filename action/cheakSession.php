@@ -5,11 +5,11 @@ if((isset($_POST['maliste']) || isset($_POST['VoirPlus'])) && (!isset($_SESSION[
     exit();
 }
 
-if (isset($_POST['maliste']) && (isset($_SESSION['is_login']) || $_SESSION['role'] == 'USER')) {
-    $userId = $_POST['userId'];
-    header('Location: maListe.php?userId=' . $userId);
-    exit();
-}
+// if (isset($_POST['maliste']) && (isset($_SESSION['is_login']) || $_SESSION['role'] == 'USER')) {
+//     $userId = $_POST['userId'];
+//     header('Location: maListe.php?userId=' . $userId);
+//     exit();
+// }
 
 if(isset($_SESSION['is_login']) && ($_SESSION['role'] == 'ADMIN')){
     session_start();

@@ -23,7 +23,8 @@ $jeu=new Jeu($connex,"","","");
 
 $Jeux=$jeu->GetJeu($GameId);
 
-
+/*test ajouterbilitetique */
+// $jeu->ajouterMabiliothetique(2,2);
 
 $newCommentaire=new Commentaire($connex);
 // echo'-----------------<br>';

@@ -1,5 +1,19 @@
 <?php
+    require_once "../config/dataBase.php";
+    require_once "../classes/bibliothéque.php";
 
+    session_start();
+    $id_user=$_SESSION['user_id'];
+
+    $db=new Database();
+    $conn= $db->getConnection();
+    $biblio=new Bibliothéque( $conn);
+
+    $mesJeux=$biblio->getALLmaBibliotheque($id_user);
+    
+    var_dump($mesJeux);
+
+    
 
 
 ?>
@@ -23,7 +37,7 @@
                 <a href="#" class="text-white font-bold hover:text-orange-300 transition duration-300">Découvrir</a>
             </nav>
             <div class="flex items-center space-x-4">
-                <span class="text-white">Bienvenue, [Nom Utilisateur]</span>
+                <span class="text-white">Bienvenue, <?php echo "[".$_SESSION['nom']."]"?></span>
                 <a href="logout.php" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition duration-300">
                     <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
                 </a>
@@ -56,31 +70,39 @@
                     <!-- Grid des jeux -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <!-- Carte de jeu -->
+                         <?php foreach($mesJeux as $monJeu):?>
                         <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg">
                             <div class="relative">
-                                <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f" 
+                                <img src="<?php echo $monJeu['image_url']?>" 
                                      alt="The Last of Us" 
                                      class="w-full h-48 object-cover">
-                                <button class="absolute top-2 right-2 text-red-500 hover:text-red-600 bg-white rounded-full p-2">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                <form action="../action/deleteMaliste.php" method="POST">
+                                    <input name="id_jeu" type="hidden" value="<?php echo $monJeu['id_jeu'] ?>">
+                                    <button class="absolute top-2 right-2 text-red-500 hover:text-red-600 bg-white rounded-full p-2">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                                    
                             </div>
                             <div class="p-6">
                                 <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-2xl font-bold">The Last of Us</h3>
+                                    <h3 class="text-2xl font-bold"><?php echo $monJeu['titre']?></h3>
                                     <div class="flex items-center">
-                                        <span class="mr-1">4.8</span>
+                                        <span class="mr-1"><?php echo $monJeu['note']?></span>
                                         <i class="fas fa-star text-yellow-400"></i>
                                     </div>
                                 </div>
-                                <p class="text-gray-400 mb-4">Une aventure post-apocalyptique captivante...</p>
+                                <p class="text-gray-400 mb-4"><?php echo $monJeu['description']?></p>
                                 <div class="flex justify-between items-center mb-4">
-                                    <select class="bg-gray-800 text-white rounded px-3 py-1 border border-gray-700">
+                                    <div class="flex justify-between w-full gap-10">
+                                        <select class="bg-gray-800 text-white rounded px-3 py-1 border border-gray-700">
                                         <option value="encours">En cours</option>
                                         <option value="termine">Terminé</option>
                                         <option value="abandonne">Abandonné</option>
-                                    </select>
-                                    <span class="text-gray-400">Ajouté le: 2024-01-15</span>
+                                        </select>
+                                        <span class="text-gray-400"><?php echo $monJeu['dateAjoutBiblio']?></span>
+                                    </div>
+                                    
                                 </div>
                                 <div class="flex justify-end">
                                     <button class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition duration-300">
@@ -89,6 +111,7 @@
                                 </div>
                             </div>
                         </div>
+                        <?php endforeach?>
                     </div>
                 </div>
 
