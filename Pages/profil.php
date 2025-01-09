@@ -1,35 +1,5 @@
 <?php
-require_once '../classes/utilsateur.php';
-require_once '../config/dataBase.php';
-
-session_start();
-if (!isset($_SESSION['is_login']) || !$_SESSION['role'] == 'USER') {
-    header('location: signin.php');
-}
-$db = new Database();
-$connex = $db->getConnection();
-
-$user_id = $_SESSION['user_id'];
-$profil = new Utilisateur($connex);
-$profilinfo = $profil->profil($user_id);
-
-
-if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ResetPass'])){
-    $currenrPass = $_POST['CurrentPas'];
-    $newPass = $_POST['mewPass'];
-    $conFirmPass = $_POST['confirNewPass'];
-    $old_Pass = $profilinfo['mot_passe'];
-
-    $ressetPassword = $profil->resetPassword($user_id, $currenrPass, $newPass, $conFirmPass, $old_Pass);
-    if($ressetPassword){
-        header('Location: logout.php');
-    }else {
-        $errors = $profil->getErrors();
-        exit();
-    }
-}
-
-
+require_once '../action/profilinformation.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,19 +18,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ResetPass'])){
             <div class="w-full sm:w-2/3 md:w-1/3 px-4 mb-6">
                 <div class="bg-black p-6 rounded-lg shadow-lg text-white">
                     <div class="relative text-center mb-6">
-                        <img id="profileImage" src="../background.jpg" alt="Profile Picture"
+                        <img id="profileImage" src="<?php echo $imageProfil['profil_photo'] ;?>" alt="Profile Picture"
                             class="rounded-full w-24 h-24 md:w-32 md:h-32 mx-auto border-4 border-orange-500 object-cover">
                         <!-- Overlay for Upload Icon -->
-                        <label for="profileInput"
-                            class="absolute inset-0 flex items-end justify-end rounded-full bg-black bg-opacity-50 cursor-pointer w-24 h-24 md:w-32 md:h-32 mx-auto">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-10 md:w-10 text-orange-500"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                            </svg>
-                            <input id="profileInput" type="file" name="profile_pic" accept="image/*" class="hidden"
-                                onchange="previewImage(event)">
-                        </label>
                     </div>
                     <h2 class="text-xl md:text-2xl font-semibold mt-4 flex items-center justify-center">
                         <?php echo $profilinfo['nom']; ?></h2>
@@ -91,45 +51,64 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ResetPass'])){
                     <P class="text-red-600 text-center"><?php echo $error ?></P>
                     <?php endforeach;?>
                     <?php endif;?>
-                    <form method="post">
+                    <form method="post" action="profil.php">
                         <div class="mb-4">
                             <label class="block text-white font-medium">Current Password</label>
-                            <input type="password" name="CurrentPas"
+                            <input type="password" name="CurrentPass"
                                 class="w-full p-3 border border-orange-500 rounded-lg text-black"
-                                placeholder="Enter current password">
+                                placeholder="Enter current password" required>
                         </div>
                         <div class="mb-4">
                             <label class="block text-white font-medium">New Password</label>
-                            <input type="password" name="mewPass"
+                            <input type="password" name="newPass"
                                 class="w-full p-3 border border-orange-500 rounded-lg text-black"
-                                placeholder="Enter new password">
+                                placeholder="Enter new password" required>
                         </div>
                         <div class="mb-4">
                             <label class="block text-white font-medium">Confirm New Password</label>
-                            <input type="password" name="confirNewPass"
+                            <input type="password" name="confirmNewPass"
                                 class="w-full p-3 border border-orange-500 rounded-lg text-black"
-                                placeholder="Confirm new password">
+                                placeholder="Confirm new password" required>
                         </div>
-                        <button type="submit"class="w-full bg-orange-500 text-black py-3 rounded-lg hover:bg-orange-600" name="ResetPass">Reset Password</button>
+                        <button type="submit"
+                            class="w-full bg-orange-500 text-black py-3 rounded-lg hover:bg-orange-600"
+                            name="ResetPass">Reset Password</button>
                     </form>
                     <?php else : ?>
                     <!-- Profile Details Panel -->
                     <h2 class="text-xl md:text-2xl font-bold mb-6">Profile Details</h2>
-                    <form method="post">
+                    <?php if(!empty($errors)) :?>
+                    <?php foreach($errors as $error):?>
+                    <P class="text-red-600 text-center"><?php echo $error ?></P>
+                    <?php endforeach;?>
+                    <?php endif;?>
+                    <form method="post" enctype="multipart/form-data">
                         <div class="mb-4">
                             <label class="block text-white font-medium">Name</label>
-                            <input type="text" class="w-full p-3 border border-orange-500 rounded-lg text-black"
-                                value="<?php echo $profilinfo['nom']; ?>">
+                            <input type="text" name="nom"
+                                class="w-full p-3 border border-orange-500 rounded-lg text-black"
+                                value="<?php echo $profilinfo['nom']; ?>" required>
                         </div>
                         <div class="mb-4">
                             <label class="block text-white font-medium">Email</label>
-                            <input type="email" class="w-full p-3 border border-orange-500 rounded-lg text-black"
-                                value="<?php echo $profilinfo['email']; ?>">
+                            <input type="email" name="email"
+                                class="w-full p-3 border border-orange-500 rounded-lg text-black"
+                                value="<?php echo $profilinfo['email']; ?>" required>
                         </div>
-                        <button type="submit"
+
+                        <div class="flex items-center justify-start p-4">
+                            <label class="block">
+                                <span class="sr-only">Choose profile photo</span>
+                                <input type="file" name="file"
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer">
+                            </label>
+                        </div>
+
+                        <button type="submit" name="UpdateInfoProfile"
                             class="w-full bg-orange-500 text-black py-3 rounded-lg hover:bg-orange-600">Save
                             Changes</button>
                     </form>
+
                     <?php endif; ?>
                 </div>
             </div>
