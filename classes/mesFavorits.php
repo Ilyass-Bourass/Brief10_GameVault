@@ -12,7 +12,7 @@
         }
 
         public function ajoutermesFavoris($id_user,$id_jeu){
-            $sql="INSERT INTO bibliotheques(id_user,id_jeu) VALUES (:id_user,:id_jeu)";
+            $sql="INSERT INTO favoris(id_user,id_jeu) VALUES (:id_user,:id_jeu)";
             $query=$this->connexion->prepare($sql);
             $query->execute([
                 ":id_user"=>$id_user,

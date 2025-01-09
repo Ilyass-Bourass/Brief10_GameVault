@@ -33,6 +33,7 @@ CREATE TABLE bibliotheques (
     id_user INT,
     id_jeu INT,
     date_ajout DATETIME DEFAULT CURRENT_TIMESTAMP,
+    etat ENUM('encours', 'termine','abandonne') DEFAULT 'encours',
     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
     FOREIGN KEY (id_jeu) REFERENCES jeux(id_jeu) ON DELETE CASCADE
 );
@@ -53,6 +54,26 @@ CREATE TABLE chat (
     id_jeu INT,
     id_user INT,
     message TEXT,
+    date_envoi DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_jeu) REFERENCES jeux(id_jeu) ON DELETE CASCADE,
+    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE
+);
+
+CREATE TABLE commentaire (
+    id_comment INT PRIMARY KEY AUTO_INCREMENT,
+    id_jeu INT,
+    id_user INT,
+    commentaire TEXT,
+    date_envoi DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_jeu) REFERENCES jeux(id_jeu) ON DELETE CASCADE,
+    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE
+);
+
+CREATE TABLE Note (
+    id_note INT PRIMARY KEY AUTO_INCREMENT,
+    id_jeu INT,
+    id_user INT,
+    note DECIMAL(5,2),
     date_envoi DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_jeu) REFERENCES jeux(id_jeu) ON DELETE CASCADE,
     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE
