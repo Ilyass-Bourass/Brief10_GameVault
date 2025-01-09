@@ -8,6 +8,7 @@ class Utilisateur {
     private $motpass;
 
     public $errors = [];
+    public $errorsMotPass = [];
 
     public function __construct($connexion) {
         $this->connexion = $connexion;
@@ -25,17 +26,19 @@ class Utilisateur {
     }
 
     public function register($name, $email, $password) {
-        /* *********************************
+        /* 
+        ************************************
         ************ validation ************
         ************************************
         */
+
         if(empty($name)){
             array_push($this->errors, "Le nom d'utilisateur est requis");
         }
 
         if (strlen($name) < 3 || strlen($name) > 20) {
             array_push($this->errors, "Le nom d'utilisateur doit comporter entre 3 et 20 caracteres");
-        } 
+        }
 
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
             array_push($this->errors, "Format d'email invalide");
@@ -103,6 +106,10 @@ class Utilisateur {
 
     public function getErrors() {
         return $this->errors;
+    }
+
+    public function getErrorsPass(){
+        return $this->errorsMotPass;
     }
 
     public function getIdUtilisateur() {
@@ -199,9 +206,129 @@ class Utilisateur {
     }
 
     public function profil($id_utilisateur){
-        $query = "SELECT nom,email FROM users WHERE id_user = :id_user";
+        $query = "SELECT * FROM users WHERE id_user = :id_user";
         $stmt = $this->connexion->prepare($query);
         $stmt->execute([':id_user' => $id_utilisateur]);
+        return $stmt->fetch(PDO:: FETCH_ASSOC);
+    }
+    
+    public function resetPassword($user_id, $CurrentPass, $newPassword, $confirmNewPass, $oldPassHach) {
+        if (empty($CurrentPass)) {
+            array_push($this->errorsMotPass, "Current Password is required");
+            return false;
+        } elseif (empty($newPassword)) {
+            array_push($this->errorsMotPass, "New password is required");
+            return false;
+        } elseif (empty($confirmNewPass)) {
+            array_push($this->errorsMotPass, "Confirm password is required");
+            return false;
+        } elseif (strlen($newPassword) < 6) {
+            array_push($this->errorsMotPass, "Password must be at least 6 characters");
+            return false;
+        }
+    
+        if (!password_verify($CurrentPass, $oldPassHach)) {
+            array_push($this->errorsMotPass, "Current password does not match");
+            return false;
+        } elseif ($newPassword !== $confirmNewPass) {
+            array_push($this->errorsMotPass, "New password and confirmation do not match");
+            return false;
+        }
+    
+        if (empty($this->errorsMotPass)) {
+            $passwordHash = password_hash($newPassword, PASSWORD_BCRYPT);
+            $query = "UPDATE users SET mot_passe = :new_Pass WHERE id_user = :id_user";
+            $stmt = $this->connexion->prepare($query);
+            $stmt->execute([
+                ':new_Pass' => $passwordHash,
+                ':id_user' => $user_id
+            ]);
+            return true;
+        }
+        return false;
+    }
+    
+
+    public function changerInfoProfil($name, $email, $userId){
+        if(empty($name)){
+            array_push($this->errors, "Le nom d'utilisateur est requis");
+            return false;
+        }
+
+        if (strlen($name) < 3 || strlen($name) > 20) {
+            array_push($this->errors, "Le nom d'utilisateur doit comporter entre 3 et 20 caracteres");
+            return false;
+        }
+
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            array_push($this->errors, "Format d'email invalide");
+            return false;
+        }
+
+        if(empty($this->ErrorsChangeInfo)){
+            try{
+                $query = "UPDATE users SET nom = :nom, email = :email WHERE id_user = :id_user";
+                $stmt = $this->connexion->prepare($query);
+                $stmt->execute([
+                    ':nom' => $name,
+                    ':email' => $email,
+                    ':id_user' => $userId
+                ]);
+                return true ;
+            }catch(PDOException $e){
+                echo "Error: " . $e->getMessage();
+            }
+        }
+        
+    }
+
+
+    public function uploadImage($fileName, $fileTmpName, $fileSize, $fileError, $user_id) {
+        $fileExt = explode('.', $fileName);
+        $fileType = strtolower(end($fileExt));
+        $allowed = array('png','jpeg','jpg');
+
+        if (!in_array($fileType, $allowed)) {
+            array_push($this->errors, "You cannot upload this file type.");
+            return false;
+        } elseif ($fileError !== 0) {
+            array_push($this->errors, "There was an error uploading the file.");
+            return false;
+        } elseif ($fileSize > 2000000) {
+            array_push($this->errors, "Your file is too big.");
+            return false;
+        } else {
+            // if (!file_exists('uploads')) {
+            //     mkdir('uploads', 0777, true);
+            // }
+
+            $newNameImage = uniqid('', true) . "." . $fileType;
+            $fileDestination = 'uploads/' . $newNameImage;
+
+            if (move_uploaded_file($fileTmpName, $fileDestination)) {
+                try {
+                    $query = "UPDATE users SET profil_photo = :profil_photo WHERE id_user = :id_user";
+                    $stmt = $this->connexion->prepare($query);
+                    $stmt->execute([
+                        ':profil_photo' => $fileDestination,
+                        ':id_user' => $user_id
+                    ]);
+                    return true; 
+                } catch (PDOException $e) {
+                    echo "Error: " . $e->getMessage();
+                    return false; 
+                }
+            } else {
+                array_push($this->errors, "Something went wrong during the upload!");
+                return false;
+            }
+        }
+    }
+    
+    public function SelectImageProfil($user_id){
+        $query = "SELECT profil_photo FROM users WHERE id_user = :user_id";
+        $stmt = $this->connexion->prepare($query);
+        $stmt->execute([':user_id' => $user_id]);
         return $stmt->fetch(PDO:: FETCH_ASSOC);
     }
 }
