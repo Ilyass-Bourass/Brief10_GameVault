@@ -121,5 +121,36 @@ class Jeu {
      return $query->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function ajouterNote($id_jeu, $id_user, $note) {
+        $sql = "INSERT INTO note(id_jeu, id_user, note) VALUES(:id_jeu, :id_user, :note)";
+        $query = $this->connexion->prepare($sql);
+        $query->execute([
+            ":id_jeu" => $id_jeu,
+            ":id_user" => $id_user,
+            ":note" => $note,
+        ]);
+
+        $moyenne = $this->calculerMoyenneNote($id_jeu);
+        $this->mettreAJourMoyenne($id_jeu, $moyenne);
+    }
+
+    private function mettreAJourMoyenne($id_jeu, $moyenne) {
+        $sql = "UPDATE jeux SET note = :note WHERE id_jeu = :id_jeu";
+        $query = $this->connexion->prepare($sql);
+        $query->execute([
+            ":note" => $moyenne,
+            ":id_jeu" => $id_jeu,
+        ]);
+    }
+
+    public function calculerMoyenneNote($id_jeu) {
+        $sql = "SELECT AVG(note) as moyenne FROM note WHERE id_jeu = :id_jeu";
+        $query = $this->connexion->prepare($sql);
+        $query->execute([':id_jeu' => $id_jeu]);
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        return $result['moyenne'];
+    }
+
+
 }
 ?>
