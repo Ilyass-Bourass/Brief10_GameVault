@@ -12,7 +12,7 @@
         $biblio=new Bibliothéque($conn);
 
         $biblio->ajouterMabiliothetique($id_user,$id_jeu); 
-            header('location:../Pages/maListe.php?=idGame='.$id_jeu);
+            header('location:../Pages/maListe.php?userId=='.$id_user);
             exit();
         
     }

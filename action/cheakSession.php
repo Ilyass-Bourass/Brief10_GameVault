@@ -8,6 +8,7 @@ if((isset($_POST['maliste']) || isset($_POST['VoirPlus'])) && (!isset($_SESSION[
 // if (isset($_POST['maliste']) && (isset($_SESSION['is_login']) || $_SESSION['role'] == 'USER')) {
 //     $userId = $_POST['userId'];
 //     header('Location: maListe.php?userId=' . $userId);
+//     header('../action/ajouterMabiliothetique.php');
 //     exit();
 // }
 
