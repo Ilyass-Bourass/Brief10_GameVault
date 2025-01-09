@@ -2,7 +2,6 @@
 require_once '../action/afficherJeux.php';
 require_once '../action/cheakSession.php';
 
-
 ?>
 
 <!DOCTYPE html>
