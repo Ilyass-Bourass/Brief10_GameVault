@@ -31,6 +31,8 @@ require_once '../action/profilinformation.php';
                             <button type="submit" name="profil"
                                 class="w-full text-left block py-2 px-3 bg-gray-800 text-gray-300 rounded hover:bg-orange-100 hover:text-black">My
                                 Profile</button>
+                            <button type="submit" name="history"
+                                class="w-full text-left block py-2 px-3 bg-gray-800 text-gray-300 rounded hover:bg-orange-100 hover:text-black">history</button>
                             <button type="submit" name="setting"
                                 class="w-full text-left block py-2 px-3 bg-gray-800 text-gray-300 rounded hover:bg-orange-100 hover:text-black">Settings</button>
                             <a href="logout.php"
@@ -74,7 +76,41 @@ require_once '../action/profilinformation.php';
                             class="w-full bg-orange-500 text-black py-3 rounded-lg hover:bg-orange-600"
                             name="ResetPass">Reset Password</button>
                     </form>
-                    <?php else : ?>
+                    <?php elseif(isset($_POST['history'])) : ?>
+
+                    <div class="container mx-auto px-4 py-8">
+                        <h1 class="text-4xl font-bold mb-6 border-b border-orange-400 pb-2">Page History</h1>
+
+                        <ul class="space-y-4">
+                            <!-- History Item 1 -->
+                            <li class="bg-orange-800 bg-opacity-20 p-4 rounded-lg shadow">
+                                <div class="flex justify-between items-center">
+                                    <h2 class="text-xl font-semibold">Visited: Home Page</h2>
+                                    <span class="text-sm text-orange-300">Jan 9, 2025, 2:30 PM</span>
+                                </div>
+                                <p class="text-orange-200 mt-2">You navigated to the home page to explore content.</p>
+                            </li>
+
+                            <!-- History Item 2 -->
+                            <li class="bg-orange-800 bg-opacity-20 p-4 rounded-lg shadow">
+                                <div class="flex justify-between items-center">
+                                    <h2 class="text-xl font-semibold">Visited: About Us</h2>
+                                    <span class="text-sm text-orange-300">Jan 9, 2025, 3:00 PM</span>
+                                </div>
+                                <p class="text-orange-200 mt-2">You read about the company's mission and values.</p>
+                            </li>
+
+                            <!-- History Item 3 -->
+                            <li class="bg-orange-800 bg-opacity-20 p-4 rounded-lg shadow">
+                                <div class="flex justify-between items-center">
+                                    <h2 class="text-xl font-semibold">Visited: Contact Page</h2>
+                                    <span class="text-sm text-orange-300">Jan 9, 2025, 3:30 PM</span>
+                                </div>
+                                <p class="text-orange-200 mt-2">You visited the contact page to send a message.</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <?php else: ?>
                     <!-- Profile Details Panel -->
                     <h2 class="text-xl md:text-2xl font-bold mb-6">Profile Details</h2>
                     <?php if(!empty($errors)) :?>
@@ -108,9 +144,8 @@ require_once '../action/profilinformation.php';
                             class="w-full bg-orange-500 text-black py-3 rounded-lg hover:bg-orange-600">Save
                             Changes</button>
                     </form>
-
-                    <?php endif; ?>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

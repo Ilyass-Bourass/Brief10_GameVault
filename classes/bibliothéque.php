@@ -11,21 +11,37 @@
             $this->connexion=$db;
         }
 
-        public function ajouterMabiliothetique($id_user,$id_jeu){
-            $sql="INSERT INTO bibliotheques(id_user,id_jeu) VALUES (:id_user,:id_jeu)";
+        public function ajouterMabiliothetique($id_user, $id_jeu, $game_name){
+            $sql="INSERT INTO bibliotheques (id_user, id_jeu) VALUES (:id_user, :id_jeu)";
             $query=$this->connexion->prepare($sql);
             $query->execute([
                 ":id_user"=>$id_user,
                 ":id_jeu"=>$id_jeu,
             ]);
+
+            $query = "INSERT INTO history (user_id, game_name) VALUES (:user_id, :game_name);";
+            $stmt = $this->connexion->prepare($query);
+            $stmt->execute([
+                ':user_id' => $id_user,
+                ':game_name' => $game_name
+            ]);
         }
+
+        public function selectNameGame($id_jeu){
+            $query = "SELECT titre FROM jeux WHERE id_jeu = :id_jeu";
+            $stmt = $this->connexion->prepare($query);
+            $stmt->execute([
+                ':id_jeu'=> $id_jeu
+            ]);
+            return $stmt->fetch(PDO:: FETCH_ASSOC);
+        }
+
 
         public function getALLmaBibliotheque($id_user){
             $sql="SELECT b.id_user,j.*,u.nom,b.date_ajout as dateAjoutBiblio FROM bibliotheques b
                     join users u on b.id_user=u.id_user
                     join jeux j on j.id_jeu=b.id_jeu
-                    where b.id_user=:id_user;
-                    ";
+                    where b.id_user=:id_user;";
             $query=$this->connexion->prepare($sql);
             $query->execute([
                 ":id_user"=>$id_user

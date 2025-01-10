@@ -7,8 +7,7 @@ require '../classes/utilsateur.php';
 
 
 session_start();
-var_dump($_SESSION);
-echo'-----------------<br>';
+
 $user_id=$_SESSION['user_id'];
 
 
@@ -29,7 +28,7 @@ $Jeux=$jeu->GetJeu($GameId);
 $newCommentaire=new Commentaire($connex);
 // echo'-----------------<br>';
 $comentaires=$newCommentaire->getAllCommentaires($GameId);
-var_dump ($comentaires);
+// var_dump ($comentaires);
 // echo'-----------------<br>';
 
 
@@ -50,6 +49,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['sendLiveChat'])){
         exit();
     }
 }
+
+
+$affichageScreenSchoot = $jeu->afficherScreenShoot($GameId);
+// echo "<pre>";
+// print_r($affichageScreenSchoot);
+// echo "</pre>";
+
 
 ?>
 
@@ -109,14 +115,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['sendLiveChat'])){
                         <?php echo $Jeux['description']?>
                     </p>
                     <div class="grid grid-cols-4 gap-4 overflow-x-scroll no-scrollbar livechat">
-                        <img src="../game1.png" alt="Image 1"
-                            class="rounded-lg shadow-md transition-transform transform hover:scale-105">
-                        <img src="../game1.png" alt="Image 2"
-                            class="rounded-lg shadow-md transition-transform transform hover:scale-105">
-                        <img src="../game1.png" alt="Image 3"
-                            class="rounded-lg shadow-md transition-transform transform hover:scale-105">
-                        <img src="../game1.png" alt="Image 4"
-                            class="rounded-lg shadow-md transition-transform transform hover:scale-105">
+                        <?php foreach($affichageScreenSchoot as $screen): ?>
+                        <img src="<?php echo $screen['image_url']; ?>" alt="Image 1" class="rounded-lg shadow-md transition-transform transform hover:scale-105">
+                        <?php endforeach; ?>
                     </div>
                 </div>
                 <!-- Comments Section -->
