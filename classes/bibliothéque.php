@@ -35,6 +35,16 @@
             ]);
             return $stmt->fetch(PDO:: FETCH_ASSOC);
         }
+        public function selectHistory($user_id){
+            $query = "SELECT * FROM history WHERE user_id = :id_user";
+            $stmt = $this->connexion->prepare($query);
+            $stmt->execute([
+                ':id_user'=> $user_id
+            ]);
+            return $stmt->fetchAll(PDO:: FETCH_ASSOC);
+        }
+
+        
 
 
         public function getALLmaBibliotheque($id_user){

@@ -1,5 +1,13 @@
 <?php
 require_once '../action/profilinformation.php';
+require_once '../classes/bibliothéque.php';
+
+$biblio = new Bibliothéque($connex);
+
+$history = $biblio->selectHistory($user_id);
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -83,31 +91,14 @@ require_once '../action/profilinformation.php';
 
                         <ul class="space-y-4">
                             <!-- History Item 1 -->
+                             <?php foreach($history as $hist):?>
                             <li class="bg-orange-800 bg-opacity-20 p-4 rounded-lg shadow">
                                 <div class="flex justify-between items-center">
-                                    <h2 class="text-xl font-semibold">Visited: Home Page</h2>
-                                    <span class="text-sm text-orange-300">Jan 9, 2025, 2:30 PM</span>
+                                    <h2 class="text-xl font-semibold"><?php echo $hist['game_name'] ?></h2>
+                                    <span class="text-sm text-orange-300">ajouter le  <?php echo $hist['timestamp'] ?></span>
                                 </div>
-                                <p class="text-orange-200 mt-2">You navigated to the home page to explore content.</p>
                             </li>
-
-                            <!-- History Item 2 -->
-                            <li class="bg-orange-800 bg-opacity-20 p-4 rounded-lg shadow">
-                                <div class="flex justify-between items-center">
-                                    <h2 class="text-xl font-semibold">Visited: About Us</h2>
-                                    <span class="text-sm text-orange-300">Jan 9, 2025, 3:00 PM</span>
-                                </div>
-                                <p class="text-orange-200 mt-2">You read about the company's mission and values.</p>
-                            </li>
-
-                            <!-- History Item 3 -->
-                            <li class="bg-orange-800 bg-opacity-20 p-4 rounded-lg shadow">
-                                <div class="flex justify-between items-center">
-                                    <h2 class="text-xl font-semibold">Visited: Contact Page</h2>
-                                    <span class="text-sm text-orange-300">Jan 9, 2025, 3:30 PM</span>
-                                </div>
-                                <p class="text-orange-200 mt-2">You visited the contact page to send a message.</p>
-                            </li>
+                            <?php endforeach; ?>
                         </ul>
                     </div>
                     <?php else: ?>
