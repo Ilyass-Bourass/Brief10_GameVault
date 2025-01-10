@@ -38,7 +38,7 @@
 
 
         public function getALLmaBibliotheque($id_user){
-            $sql="SELECT b.id_user,j.*,u.nom,b.date_ajout as dateAjoutBiblio FROM bibliotheques b
+            $sql="SELECT b.id_user,j.*,u.nom,b.date_ajout as dateAjoutBiblio,b.etat FROM bibliotheques b
                     join users u on b.id_user=u.id_user
                     join jeux j on j.id_jeu=b.id_jeu
                     where b.id_user=:id_user;";
@@ -55,6 +55,15 @@
             $query=$this->connexion->prepare($sql);
             $query->execute([
                 ":id_jeu"=>$id_jeu
+            ]);
+        }
+
+        public function updateEtatjeu($id_jeu,$new_statut){
+            $sql="UPDATE bibliotheques set etat =:new_statut where id_jeu=:id_jeu;";
+            $query=$this->connexion->prepare($sql);
+            $query->execute([
+                ":new_statut"=>$new_statut,
+                ":id_jeu"=>$id_jeu,
             ]);
         }
 

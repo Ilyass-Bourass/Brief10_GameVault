@@ -89,8 +89,8 @@ require_once '../action/cheakSession.php';
                     </div>
                     <p class="text-gray-400 mb-4"><?php echo $games['description'];?></p>
                     <div class="flex justify-between items-center">
-                        <form action="../action/ajouterMabiliothetique.php" method="post">
-                            <input type="hidden" name="idGame" value="<?php echo $games['id_jeu'];?>">
+                    <form action="<?php echo isset($_SESSION['role']) && $_SESSION['role'] == 'USER' ? '../action/ajouterMabiliothetique.php' : ''; ?>" method="post">
+                    <input type="hidden" name="idGame" value="<?php echo $games['id_jeu'];?>">
                             <input type="hidden" name="userId"
                                 value="<?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : '';?>">
                             <button type="submit"

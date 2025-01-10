@@ -10,8 +10,10 @@
     $conn= $db->getConnection();
     $biblio=new Bibliothéque( $conn);
 
-    $mesJeux=$biblio->getALLmaBibliotheque($id_user);
     
+
+    $mesJeux=$biblio->getALLmaBibliotheque($id_user);
+   
     $favoris=new Favorits($conn);
 
     $mesFavoris=$favoris->getALLmesFavoris($id_user);
@@ -99,11 +101,15 @@
                                 <p class="text-gray-400 mb-4"><?php echo $monJeu['description']?></p>
                                 <div class="flex justify-between items-center mb-4">
                                     <div class="flex justify-between w-full gap-10">
-                                        <select class="bg-gray-800 text-white rounded px-3 py-1 border border-gray-700">
-                                        <option value="encours">En cours</option>
-                                        <option value="termine">Terminé</option>
-                                        <option value="abandonne">Abandonné</option>
-                                        </select>
+                                        <form  method="POST" action="../action/changerStatutjeu.php">
+                                            <input name="id_jeu" type="hidden" value="<?php echo $monJeu['id_jeu'] ?>">
+                                            <select name="statut" onchange=this.form.submit() class="bg-gray-800 text-white rounded px-3 py-1 border border-gray-700">
+                                                <option value="encours" <?php echo ($monJeu['etat']=='encours')? 'selected' :''; ?>>En cours</option>
+                                                <option value="termine" <?php echo ($monJeu['etat']=='termine')? 'selected' :''; ?>>Terminé</option>
+                                                <option value="abandonne" <?php echo ($monJeu['etat']=='abandonne')? 'selected' :''; ?>>Abandonné</option>
+                                            </select>
+                                        </form>
+                                            
                                         <span class="text-gray-400"><?php echo $monJeu['dateAjoutBiblio']?></span>
                                     </div>
                                     
@@ -134,9 +140,7 @@
                                 <img src="<?php echo $monFavoris['image_url']?>" 
                                      alt="God of War" 
                                      class="w-full h-48 object-cover">
-                                <button class="absolute top-2 right-2 text-red-500 hover:text-red-600 bg-white rounded-full p-2">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                
                             </div>
                             <div class="p-6">
                                 <div class="flex justify-between items-center mb-4">
@@ -156,9 +160,13 @@
                                     <span class="text-gray-400"><?php echo $monFavoris['dateAjoutfavoris']?></span>
                                 </div>
                                 <div class="flex justify-end">
-                                    <button class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300">
+                                    <form method='POST' action="../action/supprimerMesFavoris.php">
+                                        <input type="hidden" name="id_jeu" value="<?php echo $monFavoris['id_jeu']?>">
+                                        <button class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300">
                                         <i class="fas fa-star-half-alt mr-2"></i>Retirer des favoris
                                     </button>
+                                    </form>
+                                    
                                 </div>
                             </div>
                         </div>

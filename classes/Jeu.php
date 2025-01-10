@@ -114,6 +114,22 @@ class Jeu {
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getAllJeuxNexisteBibliotheque($id_user) {
+        $sql = "SELECT j.* 
+                FROM jeux j
+                LEFT JOIN bibliotheques b 
+                ON b.id_jeu = j.id_jeu AND b.id_user = :id_user
+                WHERE b.id_jeu IS NULL";
+        $query = $this->connexion->prepare($sql);
+        $query->execute([
+            ":id_user" => $id_user
+        ]);
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    
+
+
     public function supprimerJeu($id_jeu){
         $sql="DELETE from jeux WHERE id_jeu=:id_jeu";
         $query=$this->connexion->prepare($sql);
