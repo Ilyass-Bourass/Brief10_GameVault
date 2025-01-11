@@ -1,5 +1,13 @@
 <?php
 require_once '../action/profilinformation.php';
+require_once '../classes/bibliothéque.php';
+
+$biblio = new Bibliothéque($connex);
+
+$history = $biblio->selectHistory($user_id);
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,6 +39,8 @@ require_once '../action/profilinformation.php';
                             <button type="submit" name="profil"
                                 class="w-full text-left block py-2 px-3 bg-gray-800 text-gray-300 rounded hover:bg-orange-100 hover:text-black">My
                                 Profile</button>
+                            <button type="submit" name="history"
+                                class="w-full text-left block py-2 px-3 bg-gray-800 text-gray-300 rounded hover:bg-orange-100 hover:text-black">history</button>
                             <button type="submit" name="setting"
                                 class="w-full text-left block py-2 px-3 bg-gray-800 text-gray-300 rounded hover:bg-orange-100 hover:text-black">Settings</button>
                             <a href="logout.php"
@@ -74,7 +84,24 @@ require_once '../action/profilinformation.php';
                             class="w-full bg-orange-500 text-black py-3 rounded-lg hover:bg-orange-600"
                             name="ResetPass">Reset Password</button>
                     </form>
-                    <?php else : ?>
+                    <?php elseif(isset($_POST['history'])) : ?>
+
+                    <div class="container mx-auto px-4 py-8">
+                        <h1 class="text-4xl font-bold mb-6 border-b border-orange-400 pb-2">Page History</h1>
+
+                        <ul class="space-y-4">
+                            <!-- History Item 1 -->
+                             <?php foreach($history as $hist):?>
+                            <li class="bg-orange-800 bg-opacity-20 p-4 rounded-lg shadow">
+                                <div class="flex justify-between items-center">
+                                    <h2 class="text-xl font-semibold"><?php echo $hist['game_name'] ?></h2>
+                                    <span class="text-sm text-orange-300">ajouter le  <?php echo $hist['timestamp'] ?></span>
+                                </div>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php else: ?>
                     <!-- Profile Details Panel -->
                     <h2 class="text-xl md:text-2xl font-bold mb-6">Profile Details</h2>
                     <?php if(!empty($errors)) :?>
@@ -108,9 +135,8 @@ require_once '../action/profilinformation.php';
                             class="w-full bg-orange-500 text-black py-3 rounded-lg hover:bg-orange-600">Save
                             Changes</button>
                     </form>
-
-                    <?php endif; ?>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

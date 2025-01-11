@@ -15,8 +15,7 @@
     $mesJeux=$biblio->getALLmaBibliotheque($id_user);
    
     $favoris=new Favorits($conn);
-    
-    
+
     $mesFavoris=$favoris->getALLmesFavoris($id_user);
     // var_dump($mesFavoris);
 

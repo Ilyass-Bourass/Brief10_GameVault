@@ -70,14 +70,39 @@ class Jeu {
         }
     }
 
-    public function ajouterJeu(){
-        $sql = "INSERT INTO jeux(titre, description, image_url) VALUES (:titre, :description, :image_url)";
+
+    public function ajouterJeu($image_urls) {
+        $sql = "INSERT INTO jeux (titre, description, image_url) VALUES (:titre, :description, :image_url)";
         $query = $this->connexion->prepare($sql);
+    
         $query->execute([
             ":titre" => $this->titre,
             ":description" => $this->description,
-            ":image_url" =>$this->image_url,
+            ":image_url" => $this->image_url,
         ]);
+    
+        $id_jeu = $this->connexion->lastInsertId();
+
+        $queryScreen = "INSERT INTO images_jeux (id_jeu, image_url) VALUES (:id_jeu, :image_url)";
+        $stmt = $this->connexion->prepare($queryScreen);
+
+        foreach ($image_urls as $image_url) {
+            $stmt->execute([
+                ':id_jeu' => $id_jeu,
+                ':image_url' => $image_url,
+            ]);
+        }
+
+        return true; 
+    }
+    
+    public function afficherScreenShoot($id_jeu){
+        $query = "SELECT * FROM images_jeux WHERE id_jeu = :id_jeu;";
+        $stmt = $this->connexion->prepare($query);
+        $stmt->execute([
+            ':id_jeu' => $id_jeu,
+        ]);
+        return $stmt->fetchAll(PDO:: FETCH_ASSOC);
     }
 
     public function getAllJeux() {

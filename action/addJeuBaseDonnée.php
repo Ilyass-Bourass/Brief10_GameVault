@@ -9,12 +9,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $title = $_POST['titre'];
     $description = $_POST['description'];
     $type = $_POST['image_url'];
-    
-    
+
 
     $jeu=new Jeu($db ,$title,$description,$type);
 
-    if($jeu->ajouterJeu()) {
+    for($i = 1 ; $i <= 4 ; $i++){
+        $nameImage = "image_url-${i}";
+        $screenSchoot[] = $_POST[$nameImage];
+    }
+    
+    if($jeu->ajouterJeu($screenSchoot)) {
         header("Location: ../Pages/dashbordAdmin.php?success=1");
         exit();
     } else {
@@ -22,4 +26,4 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 }
-?> 
+?>
